@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "functions": {
+    "app/api/crawl/route.ts": { "maxDuration": 60 },
+    "app/api/articles/route.ts": { "maxDuration": 30 }
+  }
+}

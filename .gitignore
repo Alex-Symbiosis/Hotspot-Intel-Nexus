@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+.env.local
+.env*.local
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.vscode/
+.idea/
+*.swp
+*.swo
+next-env.d.ts
+data/config.json
