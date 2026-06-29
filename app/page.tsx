@@ -1,6 +1,6 @@
 ﻿// ============================================
-// 前台首页 — 热点情报展示
-// 卡片式布局展示五大领域情报文章
+// 前台首页 — Server Component
+// 从 Supabase 异步获取情报数据
 // ============================================
 
 import { getArticlesByCategory } from "@/lib/store";
@@ -9,13 +9,14 @@ import FrontendClient from "./FrontendClient";
 
 export const dynamic = "force-dynamic";
 
-export default function HomePage() {
-  const allArticles = getArticlesByCategory("all");
+export default async function HomePage() {
+  const allArticles = await getArticlesByCategory("all");
   const categories = ["global", "tech", "business", "culture", "health"] as const;
 
-  const articlesByCategory = Object.fromEntries(
-    categories.map((cat) => [cat, getArticlesByCategory(cat)])
-  ) as Record<string, typeof allArticles>;
+  const entries = await Promise.all(
+    categories.map(async (cat) => [cat, await getArticlesByCategory(cat)] as const)
+  );
+  const articlesByCategory = Object.fromEntries(entries) as Record<string, typeof allArticles>;
 
   return (
     <div className="min-h-screen bg-apple-bg">

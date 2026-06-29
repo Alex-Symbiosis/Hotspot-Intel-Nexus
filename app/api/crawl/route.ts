@@ -6,17 +6,17 @@
 
 import { NextRequest } from "next/server";
 import { runCrawlPipeline } from "@/lib/pipeline";
+import { loadConfig } from "@/lib/config";
 import type { ProgressEvent } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60; // Vercel Pro 最长 60s
+export const maxDuration = 60;
 
 export async function GET(req: NextRequest) {
-  // 验证管理员身份（通过 Authorization header 传递密码）
+  // 验证管理员身份
   const authHeader = req.headers.get("authorization") || "";
   const password = authHeader.replace("Bearer ", "");
-  const { loadConfig } = await import("@/lib/config");
-  const config = loadConfig();
+  const config = await loadConfig();
 
   if (!config.adminPassword || password !== config.adminPassword) {
     return new Response(JSON.stringify({ error: "未授权" }), {
@@ -35,7 +35,6 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  // 发送 SSE 数据的辅助函数
   function sendSSE(event: ProgressEvent) {
     if (controller) {
       const data = JSON.stringify(event);
@@ -43,11 +42,14 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // 后台异步执行爬取流水线
   runCrawlPipeline(sendSSE).finally(() => {
     if (controller) {
       controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-      try { (controller as any).close(); } catch {}
+      try {
+        (controller as any).close();
+      } catch {
+        /* 流可能已关闭 */
+      }
     }
   });
 

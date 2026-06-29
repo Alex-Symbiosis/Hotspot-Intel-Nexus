@@ -46,7 +46,7 @@ export async function generateCategoryArticle(
   onProgress: (event: ProgressEvent) => void
 ): Promise<IntelArticle | null> {
   if (rawItems.length === 0) return null;
-  const config = loadConfig();
+  const config = await loadConfig();
   if (!config.doubaoApiKey) return null;
 
   onProgress({ type: "ai_processing", message: "AI \u6574\u5408 " + categoryLabel + " (" + rawItems.length + " \u6761\u6570\u636e)...", progress: 0 });

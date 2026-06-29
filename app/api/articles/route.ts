@@ -5,7 +5,7 @@
 // ============================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { loadArticles } from "@/lib/store";
+import { loadArticles, getArticleById } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -15,16 +15,15 @@ export async function GET(req: NextRequest) {
   const category = searchParams.get("category") || undefined;
   const id = searchParams.get("id");
 
-  const all = loadArticles();
-
   if (id) {
-    const article = all.find((a) => a.id === id);
+    const article = await getArticleById(id);
     if (!article) {
       return NextResponse.json({ error: "文章不存在" }, { status: 404 });
     }
     return NextResponse.json(article);
   }
 
+  const all = await loadArticles();
   const filtered = category && category !== "all"
     ? all.filter((a) => a.category === category)
     : all;
