@@ -18,10 +18,12 @@ export default async function HomePage() {
   );
   const articlesByCategory = Object.fromEntries(entries) as Record<string, typeof allArticles>;
 
-    return (
+      return (
     <div className="min-h-screen bg-apple-bg">
-    <FrontendClient 
-       initialArticles={allArticles}
-       // ... 其他属性
-    />
-</div>
+      <FrontendClient
+        initialArticles={allArticles}
+        articlesByCategory={articlesByCategory}
+        categoryLabels={CATEGORY_LABELS}
+      />
+    </div>
+  );
